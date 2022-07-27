@@ -1,6 +1,11 @@
-declare @i int = 0
-while @i < 5
+do $$
+declare indexQ integer;
 begin
-    set @i = @i + 1
-    insert into product (title, description, price) values ('product' + @i, 'product' + @i + 'description', @i);
-end
+	indexQ := 1;
+   while indexQ < 30 loop
+      insert into product
+         (title, description, price)
+      values ('Product' || indexQ, 'ProductDescription' || indexQ, indexQ);
+     indexQ := indexQ + 1;
+   end loop;
+end$$;
