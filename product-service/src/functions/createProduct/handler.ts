@@ -15,11 +15,16 @@ const client = new ServerlessClient({
   debug: true,
 });
 
-const getProductsList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async () => {
+const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   await client.connect();
-  const productsFromDB = await client.query(`SELECT p.id, p.title, p.description, p.price, s.count FROM product p, stocks s WHERE p.id = s.id`);
+  const { body } = event;
+  const query = {
+    text: 'INSERT INTO product(title, description, price) VALUES($1, $2, $3)',
+    values: [body.title, body.description, body.price],
+  }
+  const productsFromDB = await client.query(query);
   await client.clean();
   return formatJSONResponse(productsFromDB.rows);
 };
 
-export const main = middyfy(getProductsList);
+export const main = middyfy(createProduct);
