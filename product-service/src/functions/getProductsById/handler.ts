@@ -28,8 +28,8 @@ const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async
 
   const product = await client.query(query);
   await client.clean();
-  const statusCode = product.rows.length ? 200 : 404;
-  return formatJSONResponse(product.rows[0] || { message: 'Product not found' }, statusCode);
+  const statusCode = product.rows?.length ? 200 : 404;
+  return formatJSONResponse((product.rows && product.rows[0]) || { message: 'Product not found' }, statusCode);
 };
 
 export const main = middyfy(getProductsById);
